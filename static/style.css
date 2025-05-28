@@ -1,0 +1,32 @@
+body {
+  font-family: "Raleway", sans-serif;
+  background-color: #f9fafb;
+}
+
+header.bg-dark {
+  background-color: #1f2937;
+}
+
+.btn-outline-primary {
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.btn-outline-primary:hover {
+  background-color: #3b82f6;
+  color: #fff;
+  border-color: #3b82f6;
+}
+
+.hover-shadow:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+h1, h2, h3 {
+  font-weight: 700;
+}
+p {
+  font-weight: 300;
+}

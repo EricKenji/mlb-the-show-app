@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+
+<!--attribute slider macro-->
+{% macro attribute_slider(label, value) %}
+  {% set val = value | int %}
+  {% if val >= 85 %}
+    {% set bar_class = 'bg-success' %}
+  {% elif val >= 60 %}
+    {% set bar_class = 'bg-warning' %}
+  {% else %}
+    {% set bar_class = 'bg-danger' %}
+  {% endif %}
+  <div class="mb-2">
+    <div class="d-flex justify-content-between small fw-semibold">
+      <span>{{ label }}</span>
+      <span>{{ val }}</span>
+    </div>
+    <div class="progress" style="height: 8px;">
+      <div class="progress-bar {{ bar_class }}" role="progressbar" style="width: {{ val }}%;" aria-valuenow="{{ val }}" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+  </div>
+{% endmacro %}
+
+
+{% block content %}
+<div class="container my-5">
+  <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+
+    <!-- Player Image -->
+    <img src="{{ player.img }}" class="w-100" alt="Image of {{ player.name }}" style="max-height: 400px; object-fit: contain; background-color: #f9fafb;">
+
+    <div class="card-body p-4">
+      <!-- Basic Info -->
+      <h2 class="card-title fw-bold">{{ player.name }}</h2>
+      <p class="text-muted mb-2">{{ player.team }} ({{ player.team_short_name }}) • {{ player.display_position }} • #{{ player.jersey_number }}</p>
+
+      <!-- Bio & Physical -->
+      <div class="mb-4">
+        <strong>Bio:</strong>
+        <ul class="list-inline small text-muted">
+          <li class="list-inline-item">Age: {{ player.age }}</li>
+          <li class="list-inline-item">Height: {{ player.height }}</li>
+          <li class="list-inline-item">Weight: {{ player.weight }}</li>
+          <li class="list-inline-item">Bats: {{ player.bat_hand }}</li>
+          <li class="list-inline-item">Throws: {{ player.throw_hand }}</li>
+          <li class="list-inline-item">Born: {{ player.born }}</li>
+        </ul>
+      </div>
+
+      <!-- Overall Rating & Series -->
+      <div class="mb-4">
+        <p><strong>Overall Rating:</strong> {{ player.ovr }} | <strong>Rarity:</strong> {{ player.rarity }} | <strong>Series:</strong> {{ player.series }} ({{ player.series_year }})</p>
+      </div>
+
+      <!-- Pitching Stats (if Hitter) -->
+    {% if player.is_hitter %}
+    <div class="mb-4">
+    <h5 class="fw-semibold">Hitting Attributes</h5>
+        <div class="row">
+            <div class="col-md-6">
+            <ul class="list-group list-group-flush small">
+            <li class="list-group-item">{{ attribute_slider("Contact vs L", player.contact_left) }}</li>
+            <li class="list-group-item">{{ attribute_slider("Contact vs R", player.contact_right) }}</li>
+            <li class="list-group-item">{{ attribute_slider("Power vs L", player.power_left) }}</li>
+            <li class="list-group-item">{{ attribute_slider("Power vs R", player.power_right) }}</li>
+            <li class="list-group-item">{{ attribute_slider("Plate Vision", player.plate_vision) }}</li>
+            <li class="list-group-item">{{ attribute_slider("Plate Discipline", player.plate_discipline) }}</li>
+            <li class="list-group-item">{{ attribute_slider("Batting Clutch", player.batting_clutch) }}</li>
+            <li class="list-group-item">{{ attribute_slider("Bunting", player.bunting_ability) }}</li>
+            <li class="list-group-item">{{ attribute_slider("Drag Bunting", player.drag_bunting_ability) }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+      {% else %}
+      <div class="mb-4">
+        <h5 class="fw-semibold">Pitching Attributes</h5>
+        <div class="row">
+          <div class="col-md-6">
+            <ul class="list-group list-group-flush small">
+              <li class="list-group-item">{{ attribute_slider("Stamina", player.stamina) }}</li>
+              <li class="list-group-item">{{ attribute_slider("Pitching Clutch", player.pitching_clutch) }}</li>
+              <li class="list-group-item">{{ attribute_slider("Hits per 9", player.hits_per_bf) }}</li>
+              <li class="list-group-item">{{ attribute_slider("Walks per 9", player.bb_per_bf) }}</li>
+              <li class="list-group-item">{{ attribute_slider("Ks per 9", player.k_per_bf) }}</li>
+              <li class="list-group-item">{{ attribute_slider("HR per 9", player.hr_per_bf) }}</li>
+              <li class="list-group-item">{{ attribute_slider("Velocity", player.pitch_velocity) }}</li>
+              <li class="list-group-item">{{ attribute_slider("Control", player.pitch_control) }}</li>
+              <li class="list-group-item">{{ attribute_slider("Movement", player.pitch_movement) }}</li>
+            </ul>
+          </div>
+          <div class="col-md-6">
+            <h6>Pitches</h6>
+            <table class="table table-sm table-bordered">
+              <thead class="table-light">
+                <tr>
+                  <th>Pitch</th>
+                  <th>Speed</th>
+                  <th>Control</th>
+                  <th>Movement</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for pitch in player.pitches %}
+                <tr>
+                  <td>{{ pitch.name }}</td>
+                  <td>{{ pitch.speed }} mph</td>
+                  <td>{{ pitch.control }}</td>
+                  <td>{{ pitch.movement }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Fielding & Speed -->
+      <div class="w-100 px-3 mb-4">
+        <h5 class="fw-semibold">Fielding & Speed</h5>
+        <div class="row g-3">
+          <div class="col-md-4">{{ attribute_slider("Fielding", player.fielding_ability) }}</div>
+          <div class="col-md-4">{{ attribute_slider("Arm Strength", player.arm_strength) }}</div>
+          <div class="col-md-4">{{ attribute_slider("Arm Accuracy", player.arm_accuracy) }}</div>
+          <div class="col-md-4">{{ attribute_slider("Reaction", player.reaction_time) }}</div>
+          <div class="col-md-4">{{ attribute_slider("Speed", player.speed) }}</div>
+        </div>
+      </div>
+
+      <!-- Quirks -->
+      {% if player.quirks %}
+      <div class="mb-4">
+        <h5 class="fw-semibold">Quirks</h5>
+        <div class="row g-3">
+          {% for quirk in player.quirks %}
+          <div class="col-6 col-md-4">
+            <div class="border rounded p-2 h-100 text-center small">
+              {% if quirk.img %}
+                <img src="{{ quirk.img }}" alt="{{ quirk.name }}" class="mb-2" style="height: 40px;">
+              {% endif %}
+              <strong>{{ quirk.name }}</strong><br>
+              <span class="text-muted">{{ quirk.description }}</span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+        <!-- Market Data -->
+      {% if market %}
+      <div class="mb-4">
+        <h5 class="fw-semibold">Marketplace Info</h5>
+        <ul class="list-inline small">
+          <li class="list-inline-item"><strong>Best Buy Price:</strong> {{ market.best_buy_price }}</li>
+          <li class="list-inline-item"><strong>Best Sell Price:</strong> {{ market.best_sell_price }}</li>
+        </ul>
+      </div>
+      {% endif %}
+
+<!--line graph-->
+        {% if history %}
+      <div class="mb-4">
+        <h5 class="fw-semibold">Price History</h5>
+        <canvas id="priceChart" height="100"></canvas>
+      </div>
+
+  <script>
+    const ctx = document.getElementById('priceChart').getContext('2d');
+    const priceChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [
+          {% for point in history %}
+            "{{ point.date }}",
+          {% endfor %}
+        ],
+        datasets: [{
+          label: 'Best Buy Price',
+          data: [
+            {% for point in history %}
+              {{ point.best_buy_price }},
+            {% endfor %}
+          ],
+          borderColor: 'rgba(75, 192, 192, 1)',
+          tension: 0.1
+        },
+        {
+            label: 'Best Sell Price',
+            data: [
+              {% for point in history %}
+                {{ point.best_sell_price }},
+              {% endfor %}
+            ],
+            borderColor: 'rgba(255, 99, 132, 1)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            tension: 0.1
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            ticks: { autoSkip: true, maxTicksLimit: 10 }
+          },
+          y: {
+            beginAtZero: false
+          }
+        }
+      }
+    });
+  </script>
+  {% endif %}
+
+        <!-- Back Button -->
+        <a href="{{ url_for('home') }}" class="btn btn-outline-primary rounded-pill mt-4">← Back to Listings</a>
+      </div>
+    </div>
+  </div>
+  {% endblock %}

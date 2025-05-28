@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<header class="bg-dark text-white py-4 shadow-sm border-bottom border-secondary">
+  <div class="container">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+      <h1 class="display-6 fw-bold mb-3 mb-md-0">MLB The Show 25 Top Listings</h1>
+      <form class="d-flex" role="search" method="get" action="{{ url_for('search_player') }}">
+        <input type="search" class="form-control me-2 rounded-pill px-3 border-0" placeholder="Search players..." name="search" value="{{ request.args.get('search', '') }}">
+        <button class="btn btn-primary rounded-pill px-4" type="submit">Search</button>
+      </form>
+    </div>
+  </div>
+</header>
+
+
+<div class="container mt-5">
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+    {% for player in players %}
+    <div class="col">
+      <div class="card h-100 border-0 shadow-sm rounded-4 bg-white hover-shadow">
+        <img src="{{ player.item.img }}" class="card-img-top p-3" alt="Image of {{ player.listing_name }}" style="height: 200px; object-fit: contain;">
+        <div class="card-body">
+          <h5 class="card-title fw-bold text-dark">{{ player.listing_name }}</h5>
+          <ul class="list-unstyled text-muted small mb-3">
+            <li><strong>Team:</strong> {{ player.item.team }}</li>
+            <li><strong>Rating:</strong> {{ player.item.ovr }}</li>
+            <li><strong>Series:</strong> {{ player.item.series }}</li>
+            <li><strong>Buy:</strong> ${{ player.best_buy_price }}</li>
+            <li><strong>Sell:</strong> ${{ player.best_sell_price }}</li>
+          </ul>
+          <a href="{{ url_for('listing', player_id=player.item.uuid) }}" class="btn btn-outline-primary w-100 rounded-pill">View Details</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="d-flex justify-content-center my-4">
+  <a href="{{ url_for('home', page=page - 1) }}" class="btn btn-outline-secondary rounded-pill">← Previous</a>
+    <a href="{{ url_for('home', page=page + 1) }}" class="btn btn-outline-primary rounded-pill">Next Page →</a>
+</div>
+
+{% endblock %}

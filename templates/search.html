@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="heading">Select Player</h1>
+    {% for player in players %}
+  <p>
+    <a href="{{ url_for('listing', player_id=player.player_id) }}"> {{ player.player_name }} - {{ player.position}} - {{ player.team }}</a>
+  </p>
+    {% endfor %}
+
+</div>
+{% endblock %}
